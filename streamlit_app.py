@@ -91,38 +91,7 @@ def get_map(geojson_data: dict, fit_bounds: bool = False) -> folium.Map:
     lon_center = (bounds[0][1] + bounds[1][1]) / 2
 
     fmap = folium.Map(location=(lat_center, lon_center), zoom_start=DEFAULT_ZOOM, tiles=TILES)
-
-    tooltip = folium.GeoJsonTooltip(
-        fields=["pilot", "city"],
-        aliases=["Pilot:", "City:"],
-        localize=True,
-        sticky=True,
-    )
-
-    popup = folium.GeoJsonPopup(
-        fields=["pilot", "city"],
-        aliases=["Pilot:", "City:"],
-        localize=True,
-    )
-
-    geojson_layer = folium.GeoJson(
-        geojson_data,
-        name="Pilot Area",
-        style_function=lambda _: {
-            "fillColor": "#3186cc",
-            "color": "#3186cc",
-            "weight": 2,
-            "fillOpacity": 0.5,
-        },
-        tooltip=tooltip,
-        popup=popup,
-    )
     geojson_layer.add_to(fmap)
-
-    bounds = geojson_layer.get_bounds()
-    lat_center = (bounds[0][0] + bounds[1][0]) / 2
-    lon_center = (bounds[0][1] + bounds[1][1]) / 2
-    fmap.location = (lat_center, lon_center)
 
     if fit_bounds:
         fmap.fit_bounds(bounds)
@@ -159,28 +128,37 @@ def main() -> None:
         )
         st.stop()
 
+    # Pre-compute All Cities once
+    geojson_content_all = combine_geojson_files(geojson_paths)
+
     pilot_names = [path.stem.replace("_", " ").title() for path in geojson_paths]
     selection = st.selectbox("Select the pilot", ["All Pilots"] + pilot_names)
 
     if selection == "All Pilots":
-        geojson_content = combine_geojson_files(geojson_paths)
-        map_object = get_map(geojson_content, fit_bounds=True)
-        st_folium(map_object, width="100%", height=600)
+        map_object = get_map(geojson_content_all, fit_bounds=True)
 
-        st.download_button(
-            label="Download All Cities GeoJSON",
-            data=json.dumps(geojson_content, ensure_ascii=False, indent=2),
-            file_name="reallocate_all_pilots.geojson",
-            mime="application/geo+json",
-        )
+        with st.container():
+            st_folium(map_object, width="100%", height=600)
+
     else:
         selected_index = pilot_names.index(selection)
         selected_path = geojson_paths[selected_index]
         geojson_content = enrich_geojson(selected_path)
 
-        map_object = get_map(geojson_content, fit_bounds=True)
-        st_folium(map_object, width="100%", height=600)
+        with st.container():
+            map_object = get_map(geojson_content, fit_bounds=True)
+            st_folium(map_object, width="100%", height=600)
 
+    # Always show Download All Cities button
+    st.download_button(
+        label="Download All Cities GeoJSON",
+        data=json.dumps(geojson_content_all, ensure_ascii=False, indent=2),
+        file_name="reallocate_all_pilots.geojson",
+        mime="application/geo+json",
+    )
+
+    # If Single Pilot selected → also show pilot download button
+    if selection != "All Pilots":
         st.download_button(
             label=f"Download {selection} GeoJSON",
             data=json.dumps(geojson_content, ensure_ascii=False, indent=2),
