@@ -1,0 +1,40 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Backups
+bkp/
+
+# macOS
+.DS_Store
+
+# Streamlit cache and logs
+.streamlit/
+
+# Data files
+data/*.zip
+data/*.shp
+data/*.dbf
+data/*.shx
+data/*.prj
+data/*.cpg
+
+# IDE config
+.idea/
+.vscode/
+
+# Jupyter
+*.ipynb_checkpoints
+
+# OS junk
+Thumbs.db
+ehthumbs.db
+
+# Logs
+*.log
