@@ -1,0 +1,40 @@
+{
+  "validation": {
+    "european_bounds": {
+      "min_lon": -31.0,
+      "max_lon": 45.0,
+      "min_lat": 34.0,
+      "max_lat": 72.0
+    },
+    "min_feature_count": 1,
+    "max_feature_count": 10000,
+    "max_file_size_mb": 100,
+    "required_crs": "EPSG:4326"
+  },
+  "upload": {
+    "organization_id": "bsc",
+    "dataset_prefix": "reallocate-pilot",
+    "resource_formats": ["GeoJSON", "CSV"],
+    "private_datasets": true,
+    "auto_create_datasets": true,
+    "overwrite_resources": true,
+    "only_upload_passed": true,
+    "batch_size": 10,
+    "retry_attempts": 3,
+    "retry_delay": 5,
+    "upload_timeout": 300
+  },
+  "output": {
+    "validation_report": "validation_report.md",
+    "upload_report": "ckan_upload_report.md",
+    "summary_json": "workflow_summary.json",
+    "log_file": "workflow.log"
+  },
+  "workflow": {
+    "data_directory": "data",
+    "backup_enabled": true,
+    "backup_directory": "backup",
+    "continue_on_validation_failures": true,
+    "continue_on_upload_failures": true
+  }
+}

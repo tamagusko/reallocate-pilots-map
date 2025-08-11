@@ -38,3 +38,23 @@ ehthumbs.db
 
 # Logs
 *.log
+
+# CKAN folder with sensitive data and examples
+ckan/
+
+# Environment files with credentials
+.env
+
+# Validation workflow outputs and temporary files
+validation-upload-workflow/*.log
+validation-upload-workflow/validation_report.md
+validation-upload-workflow/ckan_upload_report.md
+validation-upload-workflow/workflow_summary.json
+
+# Allow documentation and configuration templates
+!validation-upload-workflow/README*.md
+!validation-upload-workflow/TROUBLESHOOTING.md
+!validation-upload-workflow/config_template.json
+
+# Template files should be committed
+!validation-upload-workflow/.env.template

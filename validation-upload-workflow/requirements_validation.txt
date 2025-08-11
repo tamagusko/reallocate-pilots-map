@@ -1,0 +1,35 @@
+# Core dependencies for GeoJSON validation and CKAN upload workflow
+# Install with: pip install -r requirements_validation.txt
+
+# Geospatial data handling
+geopandas>=0.14.0
+shapely>=2.0.0
+pyproj>=3.4.0
+fiona>=1.8.0
+
+# Data processing
+pandas>=1.5.0
+numpy>=1.21.0
+
+# API and web requests
+requests>=2.28.0
+ckanapi>=4.7
+urllib3>=1.26.0
+
+# Configuration and environment
+python-dotenv>=0.19.0
+
+# Note: pathlib2 is only needed for Python < 3.4, which is no longer supported
+# pathlib2>=2.3.6; python_version < "3.4"
+
+# Optional: Enhanced JSON handling
+jsonschema>=4.0.0
+
+# Optional: Progress bars for long operations
+tqdm>=4.64.0
+
+# Development and testing dependencies (optional)
+# pytest>=7.0.0
+# pytest-cov>=4.0.0
+# black>=22.0.0
+# flake8>=4.0.0
