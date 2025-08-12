@@ -60,7 +60,7 @@ python main_workflow.py --data-dir ../data
 ## Usage Examples
 
 ```bash
-# Basic validation
+# Basic validation only (most common use case)
 python main_workflow.py --validation-only --data-dir ../data
 
 # Custom configuration
@@ -69,8 +69,8 @@ python main_workflow.py --config my_config.json --data-dir ../data
 # Dry run (no actual upload)
 python main_workflow.py --dry-run --data-dir ../data
 
-# Verbose logging
-python main_workflow.py --verbose --data-dir ../data
+# Verbose logging for debugging
+python main_workflow.py --verbose --validation-only --data-dir ../data
 ```
 
 ## Input Data Requirements
