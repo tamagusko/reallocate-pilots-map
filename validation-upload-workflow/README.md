@@ -99,7 +99,7 @@ Copy `config_template.json` to `config.json` and adjust settings:
     "european_bounds": {"min_lon": -31.0, "max_lon": 45.0}
   },
   "upload": {
-    "organization_id": "bsc",
+    "organization_id": "ORGANIZATION_ID",
     "only_upload_passed": true,
     "private_datasets": true
   }
@@ -113,7 +113,7 @@ Copy `.env.template` to `.env` and add your credentials:
 ```env
 CKAN_URL=https://reallocate-ckan.iti.gr
 REALLOCATE_KEY=your_api_key_here
-CKAN_ORG_ID=bsc
+CKAN_ORG_ID=ORGANIZATION_ID
 ```
 
 > ⚠️ **Security Note**: The `.env` file is automatically ignored by Git and will not be uploaded to GitHub, keeping your API keys secure.
