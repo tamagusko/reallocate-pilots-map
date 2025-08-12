@@ -12,7 +12,7 @@
     "required_crs": "EPSG:4326"
   },
   "upload": {
-    "organization_id": "bsc",
+    "organization_id": "UCD_SDL",
     "dataset_prefix": "reallocate-pilot",
     "resource_formats": ["GeoJSON", "CSV"],
     "private_datasets": true,

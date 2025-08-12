@@ -46,7 +46,7 @@ Set the following in your `.env` file:
 ```env
 CKAN_URL=https://reallocate-ckan.iti.gr
 REALLOCATE_KEY=your_ckan_api_key_here
-CKAN_ORG_ID=bsc
+CKAN_ORG_ID=ORG_ID_HERE
 ```
 
 ## Usage
@@ -108,7 +108,7 @@ python main_workflow.py --config config.json
 ```json
 {
   "upload": {
-    "organization_id": "bsc",
+    "organization_id": "ORGANIZATION",
     "dataset_prefix": "reallocate-pilot",
     "resource_formats": ["GeoJSON", "CSV"],
     "only_upload_passed": true

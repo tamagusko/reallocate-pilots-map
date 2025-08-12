@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-CKAN uploader for validated GeoJSON files from European living labs.
+CKAN uploader for validated GeoJSON files from European REALLOCATE project.
 """
-import json
+
 import logging
 import os
 from pathlib import Path
@@ -14,7 +14,7 @@ import time
 
 import geopandas as gpd
 import pandas as pd
-from ckanapi import RemoteCKAN, NotFound, ValidationError
+from ckanapi import RemoteCKAN, NotFound
 from dotenv import load_dotenv
 
 from geojson_validator import FileValidationReport
@@ -60,7 +60,7 @@ class CKANUploader:
         # Initialize CKAN connection
         self.ckan_url = self.config.get('ckan_url') or os.getenv('CKAN_URL', 'https://reallocate-ckan.iti.gr')
         self.api_key = self.config.get('api_key') or os.getenv('REALLOCATE_KEY')
-        self.org_id = self.config.get('organization_id') or os.getenv('CKAN_ORG_ID', 'bsc')
+        self.org_id = self.config.get('organization_id') or os.getenv('CKAN_ORG_ID', 'UCD_SDL')
         
         if not self.api_key:
             raise ValueError("CKAN API key not found. Set REALLOCATE_KEY environment variable or pass in config.")
@@ -74,7 +74,7 @@ class CKANUploader:
     def _default_config(self) -> Dict:
         """Default upload configuration"""
         return {
-            'organization_id': 'bsc',
+            'organization_id': 'UCD_SDL',
             'dataset_prefix': 'reallocate-pilot',
             'resource_formats': ['GeoJSON', 'CSV'],  # Upload as GeoJSON and convert to CSV
             'private_datasets': True,
@@ -220,7 +220,7 @@ This dataset contains geospatial data for the REALLOCATE project's living lab ac
             self.logger.info(f"Created dataset '{dataset_name}' with ID: {dataset['id']}")
             return dataset
     
-    def convert_geojson_to_csv(self, file_path: Path) -> StringIO:
+    def convert_geojson_to_csv(self, file_path: Path) -> Optional[StringIO]:
         """Convert GeoJSON to CSV format for easier data access"""
         try:
             gdf = gpd.read_file(file_path)
@@ -232,7 +232,13 @@ This dataset contains geospatial data for the REALLOCATE project's living lab ac
             # Add geometry info
             gdf['geometry_type'] = gdf.geometry.geom_type
             gdf['area'] = gdf.geometry.area
-            gdf['bounds'] = gdf.geometry.bounds.to_dict('records')
+            
+            # Optimize bounds calculation - avoid dict conversion
+            bounds_df = gdf.bounds
+            gdf['min_x'] = bounds_df['minx']
+            gdf['min_y'] = bounds_df['miny']
+            gdf['max_x'] = bounds_df['maxx']
+            gdf['max_y'] = bounds_df['maxy']
             
             # Convert to regular DataFrame (remove geometry column for CSV)
             df = pd.DataFrame(gdf.drop('geometry', axis=1))

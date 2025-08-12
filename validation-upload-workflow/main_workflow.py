@@ -4,7 +4,7 @@ Main workflow script for GeoJSON validation and CKAN upload.
 
 This script orchestrates the complete workflow:
 1. Discover and inventory GeoJSON files
-2. Run comprehensive validation
+2. Run validation
 3. Generate validation reports
 4. Upload validated files to CKAN
 5. Generate upload summary reports
@@ -13,7 +13,7 @@ import argparse
 import sys
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 import logging
 from datetime import datetime
 
@@ -49,7 +49,7 @@ class WorkflowOrchestrator:
                 'required_crs': 'EPSG:4326'
             },
             'upload': {
-                'organization_id': 'bsc',
+                'organization_id': 'UCD_SDL',
                 'dataset_prefix': 'reallocate-pilot',
                 'resource_formats': ['GeoJSON', 'CSV'],
                 'private_datasets': True,
@@ -295,7 +295,7 @@ class WorkflowOrchestrator:
         
         return report_files
     
-    def run_complete_workflow(self, data_dir: Path, skip_upload: bool = False) -> Dict[str, any]:
+    def run_complete_workflow(self, data_dir: Path, skip_upload: bool = False) -> Dict[str, Any]:
         """Run the complete validation and upload workflow"""
         workflow_start = datetime.now()
         

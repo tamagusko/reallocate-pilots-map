@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive GeoJSON validation system for European living labs data.
+GeoJSON validation system for REALLOCATE pilots data.
 """
 import json
 import logging
@@ -12,8 +12,21 @@ from typing import Dict, List, Tuple, Optional, Any
 from dataclasses import dataclass
 
 import geopandas as gpd
-import numpy as np
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+
+# Constants
+DEFAULT_API_TIMEOUT = 30
+NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search"
+NOMINATIM_USER_AGENT = 'REALLOCATE-GeoJSON-Validator/1.0'
+CACHE_TIMEOUT_SECONDS = 3600
+
+# Compiled regex patterns for performance
+PILOT_FILENAME_PATTERN = re.compile(r'pilot(\d+)_(.+)\.geojson', re.IGNORECASE)
+PILOT_NUMBER_PATTERN = re.compile(r'\d+')
+FILENAME_CONVENTION_PATTERN = re.compile(r'pilot\d+_.+\.geojson$', re.IGNORECASE)
 
 
 @dataclass
@@ -51,13 +64,22 @@ class FileValidationReport:
 class CityBoundaryValidator:
     """Validate coordinates against city boundaries using external APIs"""
     
-    def __init__(self, cache_timeout: int = 3600):
+    def __init__(self, cache_timeout: int = CACHE_TIMEOUT_SECONDS):
         self.cache = {}
         self.cache_timeout = cache_timeout
         self.session = requests.Session()
         self.session.headers.update({
-            'User-Agent': 'REALLOCATE-GeoJSON-Validator/1.0'
+            'User-Agent': NOMINATIM_USER_AGENT
         })
+        # Add retry strategy
+        retry_strategy = Retry(
+            total=3,
+            backoff_factor=1,
+            status_forcelist=[429, 500, 502, 503, 504],
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        self.session.mount("http://", adapter)
+        self.session.mount("https://", adapter)
     
     def get_city_boundary(self, city_name: str) -> Optional[Dict]:
         """Get city boundary from Nominatim API with caching"""
@@ -71,7 +93,6 @@ class CityBoundaryValidator:
         
         try:
             # Query Nominatim API
-            url = "https://nominatim.openstreetmap.org/search"
             params = {
                 'q': city_name,
                 'format': 'geojson',
@@ -81,7 +102,7 @@ class CityBoundaryValidator:
                 'extratags': 1
             }
             
-            response = self.session.get(url, params=params, timeout=30)
+            response = self.session.get(NOMINATIM_BASE_URL, params=params, timeout=DEFAULT_API_TIMEOUT)
             response.raise_for_status()
             
             data = response.json()
@@ -195,8 +216,7 @@ class GeoJSONValidator:
     def extract_city_and_pilot(self, filename: str) -> Tuple[str, str]:
         """Extract city name and pilot number from filename"""
         # Primary pattern: pilot[X]_[cityname].geojson
-        primary_pattern = r'pilot(\d+)_(.+)\.geojson'
-        match = re.match(primary_pattern, filename.lower())
+        match = PILOT_FILENAME_PATTERN.match(filename.lower())
         
         if match:
             pilot_num = match.group(1)
@@ -212,7 +232,7 @@ class GeoJSONValidator:
             city_part = '_'.join(parts[1:])
             
             # Extract pilot number
-            pilot_match = re.search(r'\d+', pilot_part)
+            pilot_match = PILOT_NUMBER_PATTERN.search(pilot_part)
             pilot_num = pilot_match.group() if pilot_match else "unknown"
             
             return city_part, pilot_num
@@ -254,7 +274,7 @@ class GeoJSONValidator:
         
         # Filename convention check
         filename = file_path.name
-        if re.match(r'pilot\d+_.+\.geojson$', filename.lower()):
+        if FILENAME_CONVENTION_PATTERN.match(filename.lower()):
             results.append(ValidationResult(
                 "filename_convention", True, "Filename follows convention"
             ))
