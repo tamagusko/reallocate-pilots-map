@@ -1,0 +1,137 @@
+{
+  "workflow": {
+    "timestamp": "2025-12-11T23:28:19.302784",
+    "config": {
+      "validation": {
+        "european_bounds": {
+          "min_lon": -31.0,
+          "max_lon": 45.0,
+          "min_lat": 34.0,
+          "max_lat": 72.0
+        },
+        "min_feature_count": 1,
+        "max_feature_count": 10000,
+        "max_file_size_mb": 100,
+        "required_crs": "EPSG:4326"
+      },
+      "upload": {
+        "organization_id": "UCD_SDL",
+        "dataset_prefix": "reallocate-pilot",
+        "resource_formats": [
+          "GeoJSON",
+          "CSV"
+        ],
+        "private_datasets": true,
+        "auto_create_datasets": true,
+        "overwrite_resources": true,
+        "only_upload_passed": true,
+        "batch_size": 10,
+        "retry_attempts": 3,
+        "retry_delay": 5,
+        "upload_timeout": 300
+      },
+      "output": {
+        "validation_report": "validation_report.md",
+        "upload_report": "ckan_upload_report.md",
+        "summary_json": "workflow_summary.json",
+        "log_file": "workflow.log"
+      },
+      "workflow": {
+        "data_directory": "data",
+        "backup_enabled": true,
+        "backup_directory": "backup",
+        "continue_on_validation_failures": true,
+        "continue_on_upload_failures": true
+      }
+    },
+    "data_directory": "data"
+  },
+  "validation": {
+    "total_files": 9,
+    "passed_files": 7,
+    "failed_files": 2,
+    "files": [
+      {
+        "filename": "pilot1_barcelona.geojson",
+        "city": "barcelona",
+        "pilot": "1",
+        "status": "PASS",
+        "success_rate": 1.0,
+        "file_size": 1848,
+        "processing_time": 0.9840681552886963
+      },
+      {
+        "filename": "pilot1_budapest.geojson",
+        "city": "budapest",
+        "pilot": "1",
+        "status": "PASS",
+        "success_rate": 1.0,
+        "file_size": 744,
+        "processing_time": 0.999809741973877
+      },
+      {
+        "filename": "pilot1_gothenburg.geojson",
+        "city": "gothenburg",
+        "pilot": "1",
+        "status": "FAIL",
+        "success_rate": 0.9375,
+        "file_size": 321,
+        "processing_time": 0.8417909145355225
+      },
+      {
+        "filename": "pilot1_heidelberg.geojson",
+        "city": "heidelberg",
+        "pilot": "1",
+        "status": "PASS",
+        "success_rate": 1.0,
+        "file_size": 1130,
+        "processing_time": 1.0721001625061035
+      },
+      {
+        "filename": "pilot1_utrecht.geojson",
+        "city": "utrecht",
+        "pilot": "1",
+        "status": "PASS",
+        "success_rate": 1.0,
+        "file_size": 353,
+        "processing_time": 1.0530500411987305
+      },
+      {
+        "filename": "pilot1_warsaw.geojson",
+        "city": "warsaw",
+        "pilot": "1",
+        "status": "PASS",
+        "success_rate": 1.0,
+        "file_size": 318,
+        "processing_time": 0.913661003112793
+      },
+      {
+        "filename": "pilot2_budapest.geojson",
+        "city": "budapest",
+        "pilot": "2",
+        "status": "PASS",
+        "success_rate": 1.0,
+        "file_size": 1025,
+        "processing_time": 0.007648944854736328
+      },
+      {
+        "filename": "pilot2_gothenburg.geojson",
+        "city": "gothenburg",
+        "pilot": "2",
+        "status": "FAIL",
+        "success_rate": 0.9375,
+        "file_size": 570,
+        "processing_time": 0.002724885940551758
+      },
+      {
+        "filename": "pilot2_utrecht.geojson",
+        "city": "utrecht",
+        "pilot": "2",
+        "status": "PASS",
+        "success_rate": 1.0,
+        "file_size": 706,
+        "processing_time": 0.004273891448974609
+      }
+    ]
+  }
+}
