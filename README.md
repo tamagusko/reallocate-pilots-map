@@ -15,7 +15,7 @@ It displays pilot areas on an interactive map using Folium and allows users to:
 2. Run the app:
 
 ```bash
-streamlit run streamlit_app.py
+streamlit run app.py
 ````
 
 ## Support
