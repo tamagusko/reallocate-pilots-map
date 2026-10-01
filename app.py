@@ -13,7 +13,12 @@ from streamlit_folium import st_folium
 
 DATA_DIR: Path = Path(__file__).parent / "data"
 DEFAULT_ZOOM: int = 12
-TILES: str = "cartodbpositron"
+# Key-free basemaps. CARTO tiles now return an "API key required" placeholder.
+ESRI_GRAY_URL: str = (
+    "https://server.arcgisonline.com/ArcGIS/rest/services/"
+    "Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+)
+ESRI_GRAY_ATTR: str = "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ"
 
 def load_geojson_files() -> List[Path]:
     return sorted(DATA_DIR.glob("*.geojson"))
@@ -90,7 +95,9 @@ def get_map(geojson_data: dict, fit_bounds: bool = False) -> folium.Map:
     lat_center = (bounds[0][0] + bounds[1][0]) / 2
     lon_center = (bounds[0][1] + bounds[1][1]) / 2
 
-    fmap = folium.Map(location=(lat_center, lon_center), zoom_start=DEFAULT_ZOOM, tiles=TILES)
+    fmap = folium.Map(location=(lat_center, lon_center), zoom_start=DEFAULT_ZOOM, tiles=None)
+    folium.TileLayer("OpenStreetMap", name="OpenStreetMap").add_to(fmap)
+    folium.TileLayer(ESRI_GRAY_URL, attr=ESRI_GRAY_ATTR, name="Light Gray (Esri)", show=False).add_to(fmap)
     geojson_layer.add_to(fmap)
 
     if fit_bounds:
